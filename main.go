@@ -18,7 +18,7 @@ func main() {
 
 	Server = &WebSocket{}
 
-	Server.Addr = "0.0.0.0:8667"
+	Server.Addr = "0.0.0.0:8999"
 
 	Server.HeartBeatTimeout = time.Second * 30
 
