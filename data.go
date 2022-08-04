@@ -14,10 +14,12 @@ type Offer struct {
 	Data string `json:"data"`
 	To   string `json:"to"`
 	From string `json:"from"`
+	Type string `json:"type"`
 }
 
 type Answer struct {
 	Data string `json:"data"`
 	From string `json:"from"`
 	To   string `json:"to"`
+	Type string `json:"type"`
 }
