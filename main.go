@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 	"os"
 	"time"
@@ -14,7 +15,17 @@ import (
 
 var Server = &WebSocket{}
 
+var secret string
+
 func main() {
+
+	flag.StringVar(&secret, "secret", "", "secret key")
+
+	flag.Parse()
+
+	if secret == "" {
+		panic("secret is required")
+	}
 
 	Server = &WebSocket{}
 

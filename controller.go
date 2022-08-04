@@ -86,7 +86,7 @@ func RequestAccount(stream *socket.Stream[server.Conn]) error {
 	username := "account"
 	expired := time.Now().Unix() + 9999
 	username = strconv.Itoa(int(expired)) + ":" + username
-	key := "secret.lemonyxk.com"
+	key := secret
 
 	h := hmac.New(sha1.New, []byte(key))
 	h.Write([]byte(username))
