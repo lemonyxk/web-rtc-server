@@ -17,5 +17,5 @@ import (
 )
 
 func Open(conn server.Conn) {
-	log.Println(conn.FD(), "open")
+	log.Println(conn.FD(), "open", "ip", conn.ClientIP())
 }
