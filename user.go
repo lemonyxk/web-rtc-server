@@ -10,56 +10,65 @@
 
 package main
 
-import hash "github.com/lemonyxk/structure/v3/map"
+import "sync"
 
 type User struct {
 	Name string `json:"name"`
 	FD   int64  `json:"fd"`
 }
 
-var nameMap hash.SyncHash[string, int64]
-var fdMap hash.SyncHash[int64, *User]
+var nameMap = make(map[string]int64)
+var fdMap = make(map[int64]*User)
+var mux sync.RWMutex
 
 func AddUser(name string, user *User) {
-	nameMap.Set(name, user.FD)
-	fdMap.Set(user.FD, user)
-}
-
-func DeleteUser(name string) {
-	var fd = nameMap.Get(name)
-	if fd == 0 {
-		return
-	}
-	nameMap.Delete(name)
-	fdMap.Delete(fd)
-}
-
-func DeleteUserByFD(fd int64) {
-	var user = fdMap.Get(fd)
+	mux.Lock()
+	defer mux.Unlock()
 	if user == nil {
 		return
 	}
-	fdMap.Delete(fd)
-	nameMap.Delete(user.Name)
+	nameMap[name] = user.FD
+	fdMap[user.FD] = user
+}
+
+func DeleteUser(name string) {
+	mux.Lock()
+	defer mux.Unlock()
+	var fd = nameMap[name]
+	delete(nameMap, name)
+	delete(fdMap, fd)
+}
+
+func DeleteUserByFD(fd int64) {
+	mux.Lock()
+	defer mux.Unlock()
+	var user = fdMap[fd]
+	if user == nil {
+		return
+	}
+	delete(fdMap, fd)
+	delete(nameMap, user.Name)
 }
 
 func GetUserByName(name string) *User {
-	var fd = nameMap.Get(name)
-	if fd == 0 {
-		return nil
-	}
-	return fdMap.Get(fd)
+	mux.RLock()
+	defer mux.RUnlock()
+	var fd = nameMap[name]
+	return fdMap[fd]
 }
 
 func GetUserByFD(fd int64) *User {
-	return fdMap.Get(fd)
+	mux.RLock()
+	defer mux.RUnlock()
+	return fdMap[fd]
 }
 
 func GetAllUsers() []*User {
+	mux.RLock()
+	defer mux.RUnlock()
 	var users []*User
-	fdMap.Range(func(fd int64, user *User) bool {
+	for _, user := range fdMap {
 		users = append(users, user)
-		return true
-	})
+	}
 	return users
 }

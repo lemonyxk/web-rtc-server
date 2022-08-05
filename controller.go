@@ -60,6 +60,10 @@ func CreateOffer(stream *socket.Stream[server.Conn]) error {
 
 	var user = GetUserByName(offer.To)
 
+	if user == nil {
+		return nil
+	}
+
 	return Server.Json(user.FD, Json{
 		Event: "/CreateOffer",
 		Data:  offer,
@@ -75,6 +79,10 @@ func CreateAnswer(stream *socket.Stream[server.Conn]) error {
 	}
 
 	var user = GetUserByName(answer.To)
+
+	if user == nil {
+		return nil
+	}
 
 	return Server.Json(user.FD, Json{
 		Event: "/CreateAnswer",
