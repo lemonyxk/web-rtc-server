@@ -39,6 +39,8 @@ func Router(r *router.Router[*socket.Stream[server.Conn]]) {
 	r.Group().Before(Before).Handler(func(handler *router.Handler[*socket.Stream[server.Conn]]) {
 		handler.Route("/createOffer").Handler(CreateOffer)
 		handler.Route("/createAnswer").Handler(CreateAnswer)
+		handler.Route("/addAnswer").Handler(AddAnswer)
+		handler.Route("/endCall").Handler(EndCall)
 		handler.Route("/requestAccount").Handler(RequestAccount)
 	})
 }

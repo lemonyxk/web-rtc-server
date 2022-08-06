@@ -15,6 +15,7 @@ import "sync"
 type User struct {
 	Name string `json:"name"`
 	FD   int64  `json:"fd"`
+	IP   string `json:"ip"`
 }
 
 var nameMap = make(map[string]int64)

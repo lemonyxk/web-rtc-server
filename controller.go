@@ -32,6 +32,8 @@ func Login(stream *socket.Stream[server.Conn]) error {
 		return nil
 	}
 
+	user.IP = stream.Conn.ClientIP()
+
 	user.FD = stream.Conn.FD()
 
 	AddUser(user.Name, &user)
@@ -86,6 +88,46 @@ func CreateAnswer(stream *socket.Stream[server.Conn]) error {
 
 	return Server.Json(user.FD, Json{
 		Event: "/CreateAnswer",
+		Data:  answer,
+	})
+}
+
+func AddAnswer(stream *socket.Stream[server.Conn]) error {
+	var answer Answer
+	_ = utils.Json.Decode(stream.Data, &answer)
+
+	if answer.To == "" {
+		return nil
+	}
+
+	var user = GetUserByName(answer.To)
+
+	if user == nil {
+		return nil
+	}
+
+	return Server.Json(user.FD, Json{
+		Event: "/AddAnswer",
+		Data:  answer,
+	})
+}
+
+func EndCall(stream *socket.Stream[server.Conn]) error {
+	var answer Answer
+	_ = utils.Json.Decode(stream.Data, &answer)
+
+	if answer.To == "" {
+		return nil
+	}
+
+	var user = GetUserByName(answer.To)
+
+	if user == nil {
+		return nil
+	}
+
+	return Server.Json(user.FD, Json{
+		Event: "/EndCall",
 		Data:  answer,
 	})
 }
